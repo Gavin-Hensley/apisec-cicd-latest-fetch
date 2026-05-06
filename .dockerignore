@@ -1,0 +1,15 @@
+tests/
+.github/
+.git/
+**/__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+.venv/
+venv/
+README.md
+LICENSE
+CHANGES.md
+pyproject.toml
+uv.lock

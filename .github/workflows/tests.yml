@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit:
+    name: Unit (in-container)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t apisec-cicd-latest-fetch:test .
+
+      - name: Run robustness suite
+        run: |
+          docker run --rm \
+            -v "$PWD/tests:/test:ro" \
+            --workdir /apisec \
+            --entrypoint sh \
+            apisec-cicd-latest-fetch:test -c 'python3 /test/test_robustness.py'
+
+  lint:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run --with ruff ruff check .
