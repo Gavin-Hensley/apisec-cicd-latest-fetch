@@ -26,7 +26,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: Gavin-Hensley/apisec-cicd-latest-fetch@v0.2.2
+      - uses: Gavin-Hensley/apisec-cicd-latest-fetch@v0.2.3
         with:
           application_id: ${{ secrets.APISEC_APPLICATION_ID }}
           instance_id: ${{ secrets.APISEC_INSTANCE_ID }}
@@ -45,7 +45,7 @@ If you'd rather not pin to a Git ref, two equivalent options:
 
 ```yaml
 # Pull the published image directly
-- uses: docker://gavinapisec/apisec-cicd-latest-fetch:0.2.2
+- uses: docker://gavinapisec/apisec-cicd-latest-fetch:0.2.3
   env:
     INPUT_APPLICATION_ID: ${{ secrets.APISEC_APPLICATION_ID }}
     INPUT_INSTANCE_ID: ${{ secrets.APISEC_INSTANCE_ID }}
@@ -70,7 +70,7 @@ If you'd rather not pin to a Git ref, two equivalent options:
       -e INPUT_FAIL_ON_SEVERITY_THRESHOLD=8 \
       -e INPUT_FAIL_ON_ERROR_THRESHOLD=0 \
       -e INPUT_PRINT_SUMMARY=true \
-      gavinapisec/apisec-cicd-latest-fetch:0.2.2
+      gavinapisec/apisec-cicd-latest-fetch:0.2.3
 ```
 
 ## Inputs (env vars)

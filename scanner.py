@@ -5,7 +5,7 @@ from urllib3.util.retry import Retry
 
 from models import ScanConfig
 
-USER_AGENT = "apisec-cicd-latest-fetch/0.2.2"
+USER_AGENT = "apisec-cicd-latest-fetch/0.2.3"
 CONNECT_TIMEOUT = 10
 READ_TIMEOUT = 60
 

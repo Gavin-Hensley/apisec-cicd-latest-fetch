@@ -1,5 +1,24 @@
 # cicd-latest-fetch — Changelog
 
+## 0.2.3 — fix `uses:` invocation against the action.yml
+
+`Dockerfile` was using `CMD ["./main.py"]` with a relative path. That
+worked for `docker run` (where `WORKDIR /apisec` from the Dockerfile is
+honoured) but **broke** when consumed via the v0.2.2 `action.yml` —
+GitHub Actions overrides the container WORKDIR to
+`/github/workspace`, which doesn't contain `main.py`, producing:
+
+> `OCI runtime create failed: ... exec: "./main.py": stat ./main.py: no such file or directory`
+
+Switched to `ENTRYPOINT ["python3", "/apisec/main.py"]` — absolute path
+so the workdir override is harmless, and `ENTRYPOINT` (not `CMD`) so
+that any `args:` from the action.yml would be appended as script
+arguments instead of replacing the command.
+
+No behaviour change to the gate itself. v0.2.2 is broken when used via
+`uses: Gavin-Hensley/apisec-cicd-latest-fetch@v0.2.2` — anyone on that
+version should bump to v0.2.3.
+
 ## 0.2.2 — composite Action surface (`action.yml`)
 
 Adds an `action.yml` so customers can consume the gate via the idiomatic

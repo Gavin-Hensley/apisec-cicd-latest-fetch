@@ -45,7 +45,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://gavinapisec/apisec-cicd-latest-fetch:0.2.2'
+  image: 'docker://gavinapisec/apisec-cicd-latest-fetch:0.2.3'
   env:
     INPUT_APPLICATION_ID: ${{ inputs.application_id }}
     INPUT_INSTANCE_ID: ${{ inputs.instance_id }}

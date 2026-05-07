@@ -14,4 +14,8 @@ USER apisec
 
 RUN chmod +x ./main.py
 
-CMD ["./main.py"]
+# Absolute path matters when this image runs as a GitHub Actions Docker
+# action — Actions overrides WORKDIR to /github/workspace, which would
+# break a relative "./main.py" reference. ENTRYPOINT (not CMD) so that
+# Actions' optional `args:` are appended as script args, not replaced.
+ENTRYPOINT ["python3", "/apisec/main.py"]
