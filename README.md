@@ -9,6 +9,10 @@ every push.
 
 ## Quick start (GitHub Actions)
 
+The recommended consumption pattern is the composite Action — clean
+`with:` inputs, the version pin lives on the `@vX.Y.Z` ref, and GitHub
+handles the docker pull and exit-code propagation for you.
+
 ```yaml
 name: APIsec Latest Scan Gate
 on:
@@ -19,21 +23,55 @@ on:
 jobs:
   apisec-gate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: Run APIsec gate
-        run: |
-          docker run --rm \
-            -e INPUT_APPLICATION_ID="${{ secrets.APISEC_APPLICATION_ID }}" \
-            -e INPUT_INSTANCE_ID="${{ secrets.APISEC_INSTANCE_ID }}" \
-            -e INPUT_ACCESS_TOKEN="${{ secrets.APISEC_ACCESS_TOKEN }}" \
-            -e INPUT_FAIL_ON_SEVERITY_THRESHOLD="8" \
-            -e INPUT_FAIL_ON_ERROR_THRESHOLD="0" \
-            -e INPUT_PRINT_SUMMARY=true \
-            gavinapisec/apisec-cicd-latest-fetch:latest
+      - uses: Gavin-Hensley/apisec-cicd-latest-fetch@v0.2.2
+        with:
+          application_id: ${{ secrets.APISEC_APPLICATION_ID }}
+          instance_id: ${{ secrets.APISEC_INSTANCE_ID }}
+          access_token: ${{ secrets.APISEC_ACCESS_TOKEN }}
+          fail_on_severity_threshold: '8'
+          fail_on_error_threshold: '0'
+          print_summary: 'true'
 ```
 
 The image is published for `linux/amd64`, which matches GitHub's
 `ubuntu-latest` runners — no QEMU emulation required.
+
+### Alternative consumption patterns
+
+If you'd rather not pin to a Git ref, two equivalent options:
+
+```yaml
+# Pull the published image directly
+- uses: docker://gavinapisec/apisec-cicd-latest-fetch:0.2.2
+  env:
+    INPUT_APPLICATION_ID: ${{ secrets.APISEC_APPLICATION_ID }}
+    INPUT_INSTANCE_ID: ${{ secrets.APISEC_INSTANCE_ID }}
+    INPUT_ACCESS_TOKEN: ${{ secrets.APISEC_ACCESS_TOKEN }}
+    INPUT_FAIL_ON_SEVERITY_THRESHOLD: '8'
+    INPUT_FAIL_ON_ERROR_THRESHOLD: '0'
+    INPUT_PRINT_SUMMARY: 'true'
+```
+
+```yaml
+# Plain docker run
+- name: Run APIsec gate
+  env:
+    APISEC_APPLICATION_ID: ${{ secrets.APISEC_APPLICATION_ID }}
+    APISEC_INSTANCE_ID: ${{ secrets.APISEC_INSTANCE_ID }}
+    APISEC_ACCESS_TOKEN: ${{ secrets.APISEC_ACCESS_TOKEN }}
+  run: |
+    docker run --rm \
+      -e INPUT_APPLICATION_ID="$APISEC_APPLICATION_ID" \
+      -e INPUT_INSTANCE_ID="$APISEC_INSTANCE_ID" \
+      -e INPUT_ACCESS_TOKEN="$APISEC_ACCESS_TOKEN" \
+      -e INPUT_FAIL_ON_SEVERITY_THRESHOLD=8 \
+      -e INPUT_FAIL_ON_ERROR_THRESHOLD=0 \
+      -e INPUT_PRINT_SUMMARY=true \
+      gavinapisec/apisec-cicd-latest-fetch:0.2.2
+```
 
 ## Inputs (env vars)
 

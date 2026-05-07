@@ -1,0 +1,57 @@
+name: 'APIsec Latest Scan Gate'
+description: >-
+  Reads the current APIsec detection state for an application/instance and
+  fails the build if active findings exceed configurable CVSS-severity and
+  error-count thresholds. Does not trigger a new scan.
+author: 'Gavin Hensley'
+branding:
+  icon: 'shield'
+  color: 'red'
+
+inputs:
+  application_id:
+    description: 'APIsec application id (typically wired from a repo secret)'
+    required: true
+  instance_id:
+    description: 'APIsec instance id (typically wired from a repo secret)'
+    required: true
+  access_token:
+    description: 'APIsec bearer token (typically wired from a repo secret)'
+    required: true
+  apisec_base_url:
+    description: 'APIsec API base URL. https-only.'
+    required: false
+    default: 'https://api.apisecapps.com'
+  fail_on_severity_threshold:
+    description: >-
+      CVSS floor — active findings with score >= this value count as errors.
+      Common values: 9 (Critical only), 7 (High and above), 4 (Medium and above).
+    required: false
+    default: ''
+  fail_on_error_threshold:
+    description: >-
+      Maximum acceptable error count before the gate fails. 0 = any qualifying
+      finding fails the build.
+    required: false
+    default: ''
+  print_summary:
+    description: 'Print severity / score-count summary tables'
+    required: false
+    default: 'false'
+  print_full:
+    description: 'Print one row per finding (verbose)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'docker'
+  image: 'docker://gavinapisec/apisec-cicd-latest-fetch:0.2.2'
+  env:
+    INPUT_APPLICATION_ID: ${{ inputs.application_id }}
+    INPUT_INSTANCE_ID: ${{ inputs.instance_id }}
+    INPUT_ACCESS_TOKEN: ${{ inputs.access_token }}
+    INPUT_APISEC_BASE_URL: ${{ inputs.apisec_base_url }}
+    INPUT_FAIL_ON_SEVERITY_THRESHOLD: ${{ inputs.fail_on_severity_threshold }}
+    INPUT_FAIL_ON_ERROR_THRESHOLD: ${{ inputs.fail_on_error_threshold }}
+    INPUT_PRINT_SUMMARY: ${{ inputs.print_summary }}
+    INPUT_PRINT_FULL: ${{ inputs.print_full }}

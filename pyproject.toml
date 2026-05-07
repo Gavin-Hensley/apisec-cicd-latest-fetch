@@ -1,6 +1,6 @@
 [project]
 name = "apisec-cicd-latest-fetch"
-version = "0.2.1"
+version = "0.2.2"
 description = "CI/CD gate that reads the current APIsec detection state for an application/instance and applies CVSS-severity / error-count thresholds, without triggering a new scan."
 readme = "README.md"
 requires-python = ">=3.13"

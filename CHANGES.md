@@ -1,5 +1,27 @@
 # cicd-latest-fetch — Changelog
 
+## 0.2.2 — composite Action surface (`action.yml`)
+
+Adds an `action.yml` so customers can consume the gate via the idiomatic
+GitHub Actions interface:
+
+```yaml
+- uses: Gavin-Hensley/apisec-cicd-latest-fetch@v0.2.2
+  with:
+    application_id: ${{ secrets.APISEC_APPLICATION_ID }}
+    instance_id: ${{ secrets.APISEC_INSTANCE_ID }}
+    access_token: ${{ secrets.APISEC_ACCESS_TOKEN }}
+    fail_on_severity_threshold: '8'
+    fail_on_error_threshold: '0'
+    print_summary: 'true'
+```
+
+Behaviourally identical to 0.2.1 — same image, same gate logic. The
+action.yml is a thin wrapper that maps `with:` inputs to the existing
+`INPUT_*` env vars the image already consumes. The `docker run` and
+`uses: docker://...` consumption patterns continue to work for callers
+that prefer them.
+
 ## 0.2.1 — defensive pagination + truncation warning
 
 The /detections endpoint is not documented as paginated, but a tenant
